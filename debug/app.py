@@ -13,9 +13,9 @@ app = Flask(__name__)
 # GPIO Setup (BCM numbering)
 try:
     RELAY_SOLAR = OutputDevice(17, active_high=False)  # IN1
-    RELAY_GRID = OutputDevice(18, active_high=False)   # IN2
+    RELAY_GRID = OutputDevice(14, active_high=False)   # IN2
     RELAY_BATT = OutputDevice(27, active_high=False)   # IN3
-    RELAY_LOAD = OutputDevice(22, active_high=False)   # IN4
+    RELAY_LOAD = OutputDevice(2, active_high=False)   # IN4
     logger.info("GPIO initialized successfully")
 except Exception as e:
     logger.error(f"GPIO initialization error: {e}")
