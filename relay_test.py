@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 # Define GPIO pins connected to the relay module's IN pins
-RELAY_PINS = [14, 3, 4, 17]  # Example pins, adjust according to your wiring
+RELAY_PINS = [14, 2, 3, 4]  # Example pins, adjust according to your wiring
 
 def setup_gpio():
     """Sets up the GPIO pins for output."""
