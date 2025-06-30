@@ -9,8 +9,8 @@ import tempfile
 
 # Use a mock factory for testing if not on a Pi
 # This is a cleaner way to handle dummy devices
-try:
-    import RPi.GPIO
+#try:
+    #import RPi.GPIO
     # To run on a Pi, comment out the next line:
     # Device.pin_factory = MockFactory() 
 #except (ImportError, RuntimeError):
