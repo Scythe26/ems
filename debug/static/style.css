@@ -1,0 +1,100 @@
+body {
+    background-color: #f0f8ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 20px;
+}
+
+.dashboard-card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    font-weight: 600;
+}
+
+.power-source {
+    transition: all 0.3s ease;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+}
+
+.power-source.active {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.25);
+}
+
+.battery-indicator {
+    height: 30px;
+    background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.battery-level {
+    height: 100%;
+    background-color: #0d6efd;
+    width: 85%;
+    border-radius: 15px;
+    transition: width 0.5s ease;
+}
+
+.battery-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
+
+.status-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-on {
+    background-color: #28a745;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+.status-off {
+    background-color: #dc3545;
+}
+
+.btn-mode {
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+.btn-mode.active {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.simulation-control {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.simulation-control:hover {
+    background-color: #f8f9fa;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container py-4">
+        <div class="text-center mb-4">
+            <h1 class="display-4 text-primary">Energy Management System</h1>
+            <p class="lead">Raspberry Pi + Relay Control</p>
+        </div>
+        
+        <!-- Status Panel -->
+        <div class="dashboard-card card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Operation Mode -->
+                    <div class="col-md-4 mb-3">
+                        <h5>Operation Mode</h5>
+                        <div class="d-flex justify-content-between">
+                            <button id="auto-btn" class="btn btn-outline-primary btn-mode w-50 me-2">AUTO</button>
+                            <button id="manual-btn" class="btn btn-outline-secondary btn-mode w-50">MANUAL</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Battery Status -->
+                    <div class="col-md-4 mb-3">
+                        <h5>Battery Level</h5>
+                        <div class="battery-indicator mb-2">
+                            <div id="battery-level" class="battery-level"></div>
+                            <div id="battery-label" class="battery-label">85%</div>
+                        </div>
+                        <div id="battery-status" class="text-muted">Powered by: Battery</div>
+                    </div>
+                    
+                    <!-- Load Status -->
+                    <div class="col-md-4 mb-3">
+                        <h5>Load Status</h5>
+                        <div class="mb-2">
+                            <span class="status-indicator status-on"></span>
+                            <span id="critical-load">Critical Load: ON</span>
+                        </div>
+                        <div>
+                            <span class="status-indicator status-on"></span>
+                            <span id="non-critical-load">Non-Critical Load: ON</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Power Sources -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div id="solar-source" class="power-source">
+                            <h4>Solar Power</h4>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="status-indicator status-off"></span>
+                                    <span id="solar-status">Status: OFF</span>
+                                </div>
+                                <div id="solar-percent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div id="grid-source" class="power-source">
+                            <h4>Grid Power</h4>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="status-indicator status-off"></span>
+                                    <span id="grid-status">Status: OFF</span>
+                                </div>
+                                <div id="grid-percent">100%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div id="battery-source" class="power-source active">
+                            <h4>Battery Power</h4>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="status-indicator status-on"></span>
+                                    <span id="batt-status">Status: ON</span>
+                                </div>
+                                <div id="battery-percent">85%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Control Panel -->
+        <div class="dashboard-card card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Control Panel</h5>
+            </div>
+            <div class="card-body">
+                <!-- Relay Controls -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Solar Relay</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input relay-switch" 
+                                           type="checkbox" 
+                                           data-relay="solar"
+                                           id="solar-switch">
+                                    <label class="form-check-label" id="solar-relay-status">OFF</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Grid Relay</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input relay-switch" 
+                                           type="checkbox" 
+                                           data-relay="grid"
+                                           id="grid-switch">
+                                    <label class="form-check-label" id="grid-relay-status">OFF</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Battery Relay</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input relay-switch" 
+                                           type="checkbox" 
+                                           data-relay="battery" 
+                                           checked
+                                           id="battery-switch">
+                                    <label class="form-check-label" id="batt-relay-status">ON</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Load Relay</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input relay-switch" 
+                                           type="checkbox" 
+                                           data-relay="load" 
+                                           checked
+                                           id="load-switch">
+                                    <label class="form-check-label" id="load-relay-status">ON</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Simulation Controls -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card simulation-control" id="toggle-solar">
+                            <div class="card-body text-center">
+                                <h5>Solar Availability</h5>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="status-indicator status-off" id="solar-avail-indicator"></div>
+                                    <span id="solar-avail-text">Not Available</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card simulation-control" id="toggle-grid">
+                            <div class="card-body text-center">
+                                <h5>Grid Availability</h5>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="status-indicator status-on" id="grid-avail-indicator"></div>
+                                    <span id="grid-avail-text">Available</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update system status every 2 seconds
+        function updateStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update battery level
+                    document.getElementById('battery-level').style.width = data.battery_level + '%';
+                    document.getElementById('battery-label').textContent = Math.round(data.battery_level) + '%';
+                    document.getElementById('battery-percent').textContent = Math.round(data.battery_level) + '%';
+                    
+                    // Update power source highlighting
+                    document.querySelectorAll('.power-source').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                    document.getElementById(data.power_source + '-source').classList.add('active');
+                    
+                    // Update power status text
+                    document.getElementById('battery-status').textContent = 'Powered by: ' + 
+                        data.power_source.charAt(0).toUpperCase() + data.power_source.slice(1);
+                    
+                    // Update relay switches - enforce single power source selection
+                    const powerSources = ["solar", "grid", "battery"];
+                    const activeSource = data.power_source;
+                    
+                    powerSources.forEach(source => {
+                        const switchEl = document.getElementById(`${source}-switch`);
+                        const statusEl = document.getElementById(`${source}-relay-status`);
+                        
+                        if (switchEl) {
+                            switchEl.checked = (source === activeSource);
+                            statusEl.textContent = (source === activeSource) ? 'ON' : 'OFF';
+                        }
+                    });
+                    
+                    // Update load switch
+                    document.getElementById('load-switch').checked = data.non_critical_load;
+                    document.getElementById('load-relay-status').textContent = 
+                        data.non_critical_load ? 'ON' : 'OFF';
+                    
+                    // Update load statuses
+                    document.getElementById('critical-load').textContent = 'Critical Load: ' + 
+                        (data.critical_load ? 'ON' : 'OFF');
+                    document.querySelector('#critical-load').previousElementSibling.className = 
+                        'status-indicator ' + (data.critical_load ? 'status-on' : 'status-off');
+                    
+                    document.getElementById('non-critical-load').textContent = 'Non-Critical Load: ' + 
+                        (data.non_critical_load ? 'ON' : 'OFF');
+                    document.querySelector('#non-critical-load').previousElementSibling.className = 
+                        'status-indicator ' + (data.non_critical_load ? 'status-on' : 'status-off');
+                    
+                    // Update solar status
+                    document.getElementById('solar-status').textContent = 'Status: ' + 
+                        (data.relay_status.solar ? 'ON' : 'OFF');
+                    document.querySelector('#solar-status').previousElementSibling.className = 
+                        'status-indicator ' + (data.relay_status.solar ? 'status-on' : 'status-off');
+                    
+                    // Update grid status
+                    document.getElementById('grid-status').textContent = 'Status: ' + 
+                        (data.relay_status.grid ? 'ON' : 'OFF');
+                    document.querySelector('#grid-status').previousElementSibling.className = 
+                        'status-indicator ' + (data.relay_status.grid ? 'status-on' : 'status-off');
+                    
+                    // Update availability indicators
+                    document.getElementById('solar-avail-text').textContent = 
+                        data.solar_available ? 'Available' : 'Not Available';
+                    document.getElementById('solar-avail-indicator').className = 
+                        'status-indicator ' + (data.solar_available ? 'status-on' : 'status-off');
+                    
+                    document.getElementById('grid-avail-text').textContent = 
+                        data.grid_available ? 'Available' : 'Not Available';
+                    document.getElementById('grid-avail-indicator').className = 
+                        'status-indicator ' + (data.grid_available ? 'status-on' : 'status-off');
+                    
+                    // Update mode buttons
+                    document.getElementById('auto-btn').classList.toggle('active', data.mode === 'auto');
+                    document.getElementById('manual-btn').classList.toggle('active', data.mode === 'manual');
+                })
+                .catch(error => {
+                    console.error('Status update error:', error);
+                });
+        }
+        
+        // Control handlers
+        document.getElementById('auto-btn').addEventListener('click', () => {
+            fetch('/control', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({mode: 'auto'})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) console.error('Mode change failed');
+            });
+        });
+        
+        document.getElementById('manual-btn').addEventListener('click', () => {
+            fetch('/control', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({mode: 'manual'})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) console.error('Mode change failed');
+            });
+        });
+        
+        document.querySelectorAll('.relay-switch').forEach(switchEl => {
+            switchEl.addEventListener('change', function() {
+                const relay = this.dataset.relay;
+                const state = this.checked;
+                
+                fetch('/control', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        relay: relay,
+                        state: state
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        console.error('Relay control failed');
+                        // Revert UI state if failed
+                        this.checked = !state;
+                    }
+                });
+            });
+        });
+        
+        document.getElementById('toggle-solar').addEventListener('click', () => {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    const newState = !data.solar_available;
+                    fetch('/control', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({solar_available: newState})
+                    });
+                });
+        });
+        
+        document.getElementById('toggle-grid').addEventListener('click', () => {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    const newState = !data.grid_available;
+                    fetch('/control', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({grid_available: newState})
+                    });
+                });
+        });
+        
+        // Initial update and set interval
+        updateStatus();
+        setInterval(updateStatus, 2000);
+    </script>
+</body>
+</html>
