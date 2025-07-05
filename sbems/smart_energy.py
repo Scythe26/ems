@@ -79,9 +79,9 @@ thread.start()
 def index():
     return render_template('index.html', state=state)
 
-@app.route('/static/styles.css')
-def static_files(styles.css):
-    return send_from_directory('static', styles.css)
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
 
 @app.route('/set_mode', methods=['POST'])
 def set_mode():
